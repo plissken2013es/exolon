@@ -1,0 +1,56 @@
+# Builds the website (`npm run build:site`: the menu, the original version
+# and the Phaser 4 one) and publishes it as a new commit on the gh-pages
+# branch, which GitHub Pages serves.
+name: Publish website
+
+on:
+  push:
+    branches: [phaser4]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# one publication at a time, in order
+concurrency:
+  group: publish-site
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build:site
+
+      - name: Commit the site to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git fetch --depth=1 origin gh-pages; then
+            git worktree add -B gh-pages ../gh-pages origin/gh-pages
+          else
+            git worktree add --orphan -b gh-pages ../gh-pages
+          fi
+
+          cd ../gh-pages
+          git rm -rq --ignore-unmatch .
+          cp -a "$GITHUB_WORKSPACE/dist-site/." .
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "The site hasn't changed"
+            exit 0
+          fi
+
+          git commit -m "Publish the website from ${GITHUB_SHA::7}"
+          git push origin gh-pages
