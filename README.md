@@ -22,12 +22,11 @@ is complete, so both can be compared.
     npm run dev      # http://localhost:5173/
     npm run build    # static build in dist/
 
-What is ported so far: the loading and title screens, the play screen (all 75
-maps, the stars, the HUD, moving between screens, game over) and the player
-(movement, jumping, ducking, blaster, grenades, dying and respawning, the
-exolon outfit). The other entities of the maps are not ported yet: they are
-drawn as half-transparent placeholders without behaviour or collisions (see
-`showUnportedEntities` in `phaser/src/config.js`).
+Everything from the original is ported: the loading, title, play and bonus
+screens, all 75 maps, the player and every entity. The logic reproduces the
+melonJS version exactly, including some of its quirks (e.g. stars may be drawn
+over the planets, and an object removed twice is destroyed twice), so both
+versions play the same.
 
 ### How it's organised
 
@@ -46,6 +45,9 @@ drawn as half-transparent placeholders without behaviour or collisions (see
 ### Checking the port against the original
 
 `npm run compare` plays the melonJS version and the Phaser port side by side,
-one frame at a time and with the same keys held, and reports any difference in
-the state of the player. It needs both games served locally: see the comment at
-the top of `tools/compare-with-melonjs.mjs`.
+one frame at a time, with the same keys held and the same random numbers, and
+reports any difference in the state of the player, the counters (ammo, points,
+lives...) and the position of every entity. It runs a set of screens from the
+three levels by default, or the ones given (`npm run compare -- L02S05`). It
+needs both games served locally: see the comment at the top of
+`tools/compare-with-melonjs.mjs`.

@@ -7,6 +7,7 @@ import BootScene from "./scenes/BootScene.js";
 import LoadingScene from "./scenes/LoadingScene.js";
 import TitleScene from "./scenes/TitleScene.js";
 import PlayScene from "./scenes/PlayScene.js";
+import BonusScene from "./scenes/BonusScene.js";
 
 input.bindKey(input.KEY.LEFT, "left");
 input.bindKey(input.KEY.RIGHT, "right");
@@ -32,7 +33,7 @@ new Phaser.Game({
   // Keyboard input is read directly from the window (see engine/input.js).
   input: { keyboard: false, mouse: false, touch: false, gamepad: false },
   audio: { disableWebAudio: false },
-  scene: [BootScene, LoadingScene, TitleScene, PlayScene],
+  scene: [BootScene, LoadingScene, TitleScene, PlayScene, BonusScene],
 });
 
 function initSoundToggle() {

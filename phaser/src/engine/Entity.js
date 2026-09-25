@@ -5,7 +5,7 @@ import game from "./game.js";
  * An axis-aligned hit box attached to an entity position, like melonJS's
  * collision `me.Rect` with an adjusted size.
  */
-class CollisionBox {
+export class CollisionBox {
   constructor(pos, width, height) {
     this.pos = pos;
     this.colPos = { x: 0, y: 0 };
@@ -147,6 +147,28 @@ export default class Entity {
     this.singleFrame = this.spritecount.x * this.spritecount.y === 1;
     this.addAnimation("default", null);
     this.setCurrentAnimation("default");
+  }
+
+  // the entity rectangle (the sprite bounds, not the collision box)
+
+  get left() {
+    return this.pos.x;
+  }
+
+  get right() {
+    return this.pos.x + this.width;
+  }
+
+  get top() {
+    return this.pos.y;
+  }
+
+  get bottom() {
+    return this.pos.y + this.height;
+  }
+
+  get collisionMap() {
+    return game.collisionMap;
   }
 
   // --- animation -----------------------------------------------------------

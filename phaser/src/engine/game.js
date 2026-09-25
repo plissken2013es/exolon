@@ -10,7 +10,8 @@ import config from "../config.js";
  * - Objects are kept in a list sorted by descending z and updated from the
  *   end, i.e. lowest z first (among equal z, the most recently added first).
  * - Objects added during a frame are not updated until the next frame.
- * - Removal is deferred until the end of the frame.
+ * - Removal is deferred until the end of the frame: removed objects are
+ *   still updated until then.
  * - `collide` returns the first overlapping collidable entity, in update order.
  * - Entities outside the viewport become invisible, which also makes them
  *   non-collidable and freezes their animation.
@@ -34,6 +35,14 @@ const game = {
   pendingRemovals: [],
   sortPending: false,
 
+  // game time in ms, advanced by 1000/60 every update (melonJS used the
+  // real time of the frame, which is the same at 60 fps)
+  time: 0,
+
+  // true once a scene change has been requested, to stop simulating the
+  // scene being left
+  changingScene: false,
+
   debugGraphics: null,
 
   /**
@@ -45,20 +54,32 @@ const game = {
     this.currentLevel = null;
     this.collisionMap = null;
     this.HUD = null;
+    this.changingScene = false;
     this.debugGraphics = config.renderHitBox ? scene.add.graphics().setDepth(10000) : null;
   },
 
+  /**
+   * Switches to another scene at the end of the frame, like
+   * `me.state.change`.
+   */
+  changeScene(key) {
+    if (!this.changingScene) {
+      this.changingScene = true;
+      this.scene.scene.start(key);
+    }
+  },
+
   add(obj, z) {
-    obj.removed = false;
     obj.z = z ? z : obj.z;
     this.objects.push(obj);
   },
 
+  /**
+   * Destroys `obj` and takes it out of the list at the end of the frame (it
+   * is still updated until then). As in melonJS, removing an object twice
+   * destroys it twice.
+   */
   remove(obj) {
-    if (obj.removed) {
-      return;
-    }
-    obj.removed = true;
     if (obj.destroy) {
       obj.destroy();
     }
@@ -67,12 +88,16 @@ const game = {
     this.pendingRemovals.push(obj);
   },
 
+  /**
+   * Destroys all the objects, including those removed during this frame
+   * (which are then destroyed twice, as in melonJS).
+   */
   removeAll() {
-    for (const obj of this.objects) {
-      if (!obj.removed && obj.destroy) {
-        obj.destroy();
+    const objects = this.objects;
+    for (let i = objects.length - 1; i >= 0; i--) {
+      if (objects[i].destroy) {
+        objects[i].destroy();
       }
-      obj.removed = true;
     }
     this.objects = [];
     this.pendingRemovals = [];
@@ -91,15 +116,13 @@ const game = {
    * displayed frame, at 60 fps).
    */
   update() {
+    this.time += 1000 / 60;
     // Like melonJS, keep reading the current list: when the level changes
     // during an update the loop carries on over the new level's objects.
     for (let i = this.objects.length - 1; i >= 0; i--) {
       const obj = this.objects[i];
       if (obj === undefined) {
         break;
-      }
-      if (obj.removed) {
-        continue;
       }
       obj.update();
       if (obj.isEntity) {

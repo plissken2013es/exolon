@@ -39,8 +39,11 @@ export default class TitleScene extends Phaser.Scene {
 
   update(time, delta) {
     this.fixedStep.tick(delta, () => {
+      if (game.changingScene) {
+        return false;
+      }
       if (input.isKeyPressed("fire")) {
-        this.scene.start("Play");
+        game.changeScene("Play");
         return false;
       }
       game.update();

@@ -12,10 +12,6 @@ const config = {
   // "vitorc" or "exolon"
   initialVitorcOutfit: "vitorc",
 
-  // Map objects whose entity has not been ported to Phaser yet are drawn as
-  // static placeholders (no behaviour, no collisions) when this is true.
-  showUnportedEntities: true,
-
   // debug
   renderHitBox: false,
   renderCollisionMap: false,

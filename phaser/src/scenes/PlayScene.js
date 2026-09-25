@@ -7,8 +7,8 @@ import config from "../config.js";
 import global from "../global.js";
 import util from "../util.js";
 import entities from "../entities/index.js";
-import UnportedEntity from "../entities/UnportedEntity.js";
 import GameOverWindow from "../entities/GameOverWindow.js";
+import HarbringerCreatorEntity from "../entities/HarbringerCreatorEntity.js";
 import HUD from "../hud/HUD.js";
 import AmmoHUD from "../hud/AmmoHUD.js";
 import GrenadesHUD from "../hud/GrenadesHUD.js";
@@ -44,7 +44,6 @@ export default class PlayScene extends Phaser.Scene {
     game.init(this);
     this.fixedStep = new FixedStep();
     this.paused = false;
-    this.tilemap = null;
     this.layers = {};
 
     this.loadLevel(global.nextLevel);
@@ -63,16 +62,19 @@ export default class PlayScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       if (game.scene === this) {
-        game.removeAll();
+        // (the HUD is going away with the scene: don't update it)
         game.HUD = null;
+        game.removeAll();
         game.currentLevel = null;
       }
+      // the map goes away with the scene
+      this.tilemap = null;
     });
   }
 
   update(time, delta) {
     this.fixedStep.tick(delta, () => {
-      if (this.paused) {
+      if (this.paused || game.changingScene) {
         return false;
       }
       game.update();
@@ -142,7 +144,7 @@ export default class PlayScene extends Phaser.Scene {
    * Creates the entity for a map object.
    */
   addEntity(map, object, z) {
-    const settings = { name: object.name, width: object.width, height: object.height };
+    const settings = { name: object.name, width: object.width, height: object.height, z };
     for (const property of object.properties || []) {
       settings[property.name] = property.value;
     }
@@ -154,15 +156,14 @@ export default class PlayScene extends Phaser.Scene {
       settings.image = tileset.name;
       settings.width = settings.spritewidth = tileset.tilewidth;
       settings.height = tileset.tileheight;
-      settings.tileIndex = object.gid - tileset.firstgid;
       y -= tileset.tileheight;
     }
 
     const EntityClass = entities[object.name];
     if (EntityClass) {
       game.add(new EntityClass(object.x, y, settings), z);
-    } else if (config.showUnportedEntities && object.gid) {
-      game.add(new UnportedEntity(object.x, y, settings), z);
+    } else {
+      console.warn(`Unknown object "${object.name}" in map ${game.currentLevel.name}`);
     }
   }
 
@@ -206,7 +207,7 @@ export default class PlayScene extends Phaser.Scene {
     global.aliveGrenadesCount = 0;
     global.aliveMissilesCount = 0;
 
-    this.time.delayedCall(4000, () => this.scene.start("Title"));
+    this.time.delayedCall(4000, () => game.changeScene("Title"));
     audio.play("gameover");
   }
 
@@ -249,7 +250,11 @@ export default class PlayScene extends Phaser.Scene {
     while (i < STARS_COUNT) {
       const x = util.getRandomInt(0, 31);
       const y = util.getRandomInt(0, 17);
-      if (layer.getTileAt(x, y)) {
+      // The original meant to skip cells already taken, but it looked up the
+      // tile coordinates as if they were pixels, i.e. it checked the cell at
+      // (x / 16, y / 16). Kept as is, so stars can land on the planets, as
+      // they did, and the random numbers drawn stay the same.
+      if (layer.getTileAt(Math.floor(x / 16), Math.floor(y / 16))) {
         continue;
       }
       layer.putTileAt(util.arrayRandomElement(STAR_TILES), x, y);
@@ -258,10 +263,8 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   addHarbringerCreator() {
-    // TODO: port HarbringerCreatorEntity (it sends an enemy after the player
-    // when they stay too long in a screen). Until then an inert object takes
-    // its place in the object list.
-    game.add(new LayerStandIn(), HUD_Z);
+    const creator = new HarbringerCreatorEntity();
+    game.add(creator, HUD_Z);
     game.sort();
   }
 }
