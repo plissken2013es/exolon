@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "maps": "node tools/tmx2json.mjs",
-    "compare": "node tools/compare-with-melonjs.mjs"
+    "compare": "node tools/compare-with-melonjs.mjs",
+    "build:site": "node tools/build-site.mjs"
   },
   "dependencies": {
     "phaser": "^4.2.1"

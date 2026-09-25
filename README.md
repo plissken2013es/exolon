@@ -42,6 +42,14 @@ versions play the same.
   are generated from the TMX maps in `maps/` (still the ones to edit, with
   Tiled) by `npm run maps`.
 
+### Website
+
+`npm run build:site` builds the website published on GitHub Pages (the
+`gh-pages` branch) into `dist-site/`: a menu (`site/index.html`) to choose
+between the original version (`exolon.html`, at its usual address) and the
+Phaser 4 one (`phaser4/`). To publish it, replace the contents of the
+`gh-pages` branch with those of `dist-site/`.
+
 ### Checking the port against the original
 
 `npm run compare` plays the melonJS version and the Phaser port side by side,
