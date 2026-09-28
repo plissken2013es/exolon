@@ -195,7 +195,7 @@ export default class PlayScene extends Phaser.Scene {
 
     this.paused = true;
 
-    global.nextLevel = config.initialLevel;
+    global.nextLevel = config.startLevel || config.initialLevel;
 
     global.ammo = config.initialAmmo;
     global.grenades = config.initialGrenades;

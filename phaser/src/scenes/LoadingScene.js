@@ -1,6 +1,8 @@
 import * as Phaser from "phaser";
 import { images, sounds, maps } from "../resources.js";
 import { registerFonts } from "../engine/fonts.js";
+import config from "../config.js";
+import global from "../global.js";
 
 const BAR = { x: 416, y: 368, width: 96, height: 16 };
 
@@ -36,6 +38,12 @@ export default class LoadingScene extends Phaser.Scene {
 
   create() {
     registerFonts(this);
-    this.scene.start("Title");
+    if (config.startLevel) {
+      // straight to the screen given in the URL
+      global.nextLevel = config.startLevel;
+      this.scene.start("Play");
+    } else {
+      this.scene.start("Title");
+    }
   }
 }

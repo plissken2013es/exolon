@@ -319,7 +319,9 @@ export default class VitorcEntity extends Entity {
     game.sort();
 
     global.aliveBlasterBulletCount++;
-    util.updateAmmo(-1);
+    if (!config.infiniteAmmo) {
+      util.updateAmmo(-1);
+    }
 
     audio.play("shot2");
   }
@@ -339,7 +341,9 @@ export default class VitorcEntity extends Entity {
     game.sort();
 
     global.aliveGrenadesCount++;
-    util.updateGrenades(-1);
+    if (!config.infiniteAmmo) {
+      util.updateGrenades(-1);
+    }
 
     audio.play("grenade");
   }
@@ -357,7 +361,7 @@ export default class VitorcEntity extends Entity {
   }
 
   die() {
-    if (this.invincible) {
+    if (this.invincible || config.invincible) {
       return;
     }
 

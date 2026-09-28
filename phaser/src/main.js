@@ -8,6 +8,9 @@ import LoadingScene from "./scenes/LoadingScene.js";
 import TitleScene from "./scenes/TitleScene.js";
 import PlayScene from "./scenes/PlayScene.js";
 import BonusScene from "./scenes/BonusScene.js";
+import config from "./config.js";
+import { applyLaunchOptions } from "./launch.js";
+import { enableMapHotReload } from "./maps/hotReload.js";
 
 input.bindKey(input.KEY.LEFT, "left");
 input.bindKey(input.KEY.RIGHT, "right");
@@ -15,6 +18,7 @@ input.bindKey(input.KEY.UP, "jump");
 input.bindKey(input.KEY.DOWN, "duck");
 input.bindKey(input.KEY.SPACE, "fire");
 
+applyLaunchOptions();
 initSoundToggle();
 
 if (import.meta.env.DEV) {
@@ -22,7 +26,7 @@ if (import.meta.env.DEV) {
   window.exolon = { game, global };
 }
 
-new Phaser.Game({
+const phaserGame = new Phaser.Game({
   // The tileset offsets set in PlayScene#loadLevel assume the WebGL renderer
   type: Phaser.WEBGL,
   parent: "app",
@@ -35,6 +39,8 @@ new Phaser.Game({
   audio: { disableWebAudio: false },
   scene: [BootScene, LoadingScene, TitleScene, PlayScene, BonusScene],
 });
+
+enableMapHotReload(phaserGame);
 
 function initSoundToggle() {
   const anchor = document.createElement("a");
@@ -52,4 +58,11 @@ function initSoundToggle() {
     }
   });
   document.getElementById("sound").append(anchor);
+
+  if (config.invincible) {
+    const god = document.createElement("span");
+    god.textContent = "GOD MODE";
+    god.style.cssText = "float: left; color: #e800e8;";
+    document.getElementById("info").prepend(god);
+  }
 }

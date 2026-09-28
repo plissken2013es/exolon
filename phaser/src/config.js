@@ -12,6 +12,11 @@ const config = {
   // "vitorc" or "exolon"
   initialVitorcOutfit: "vitorc",
 
+  // testing options, set from the URL (see launch.js)
+  startLevel: null, // ?level=L02S05: start playing at that screen
+  invincible: false, // ?god: the player can't die...
+  infiniteAmmo: false, // ...and never runs out of ammo or grenades
+
   // debug
   renderHitBox: false,
   renderCollisionMap: false,

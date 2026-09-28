@@ -39,8 +39,21 @@ versions play the same.
 - `phaser/src/entities/`, `scenes/` and `hud/` are the game code, ported from
   `src/` with as few changes as possible.
 - `phaser/maps/` holds the maps in Tiled JSON, the format Phaser reads. They
-  are generated from the TMX maps in `maps/` (still the ones to edit, with
-  Tiled) by `npm run maps`.
+  are generated from the TMX maps in `maps/` (the ones to edit), see below.
+
+### Editing the maps
+
+The maps are the TMX files in `maps/`, made with [Tiled](https://www.mapeditor.org/).
+While `npm run dev` runs, saving a map converts it to `phaser/maps/` and the
+page reloads it (restarting the screen if it's being played).
+
+To try a screen, open the game at it and, if needed, without dying:
+
+    http://localhost:5173/?level=L02S05        start at screen L02S05
+    http://localhost:5173/?level=L02S05&god    ...and can't die, infinite ammo
+
+`npm run maps` converts all the maps by hand (`-- --check` also checks that
+they can be written back to TMX unchanged).
 
 ### Website
 
