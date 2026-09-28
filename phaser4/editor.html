@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exolon level editor</title>
+    <meta charset="UTF-8" />
+    <style>:root{--cyan:#00dede;--magenta:#e800e8;--yellow:#ff0;--green:#00b500;--red:#ef0000;--panel:#0c0c0c;--line:#1f3f3f}*{box-sizing:border-box}body{color:var(--cyan);background:#000;flex-direction:column;height:100vh;margin:0;font:700 12px Verdana,Geneva,sans-serif;display:flex}a{color:var(--cyan)}button,select,input{font:inherit;color:var(--cyan);border:1px solid var(--line);background:#000;padding:3px 6px}button{cursor:pointer}button:hover{border-color:var(--cyan)}header{border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 12px;display:flex}header h1{color:var(--magenta);margin:0 8px 0 0;font-size:14px}header .group{align-items:center;gap:4px;display:flex}#play{color:#000;background:var(--green);border-color:var(--green)}main{flex:1;min-height:0;display:flex}#view{flex:1;padding:12px;overflow:auto}#map{image-rendering:pixelated;cursor:crosshair;outline:1px solid var(--line);display:block}#game iframe{border:0;display:block}#game p{color:var(--magenta)}aside{border-left:1px solid var(--line);background:var(--panel);width:510px;overflow-y:auto}aside section{border-bottom:1px solid var(--line);padding:8px 12px 12px}aside h2{color:var(--magenta);margin:0 0 8px;font-size:12px}#layers{margin:0;padding:0;list-style:none}#layers li{align-items:center;gap:4px;margin:2px 0;display:flex}#layers li button{text-align:left;border-color:#0000;flex:1}#layers li.active button,.objectType.active{color:#000;background:var(--cyan)}#paletteBox{max-height:520px;margin-top:8px;overflow:auto}#palette{image-rendering:pixelated;cursor:pointer;display:block}#objectTypes{grid-template-columns:repeat(4,1fr);gap:4px;display:grid}.objectType{flex-direction:column;align-items:center;gap:2px;padding:4px 2px;font-size:9px;display:flex;overflow:hidden}.objectType span{word-break:break-all}.objectType canvas{image-rendering:pixelated}#props .prop{flex-wrap:wrap;align-items:center;gap:4px 8px;margin:4px 0;display:flex}#props label{width:110px;color:var(--yellow)}#props input,#props select{width:150px}#props small{color:#6a8a8a;flex-basis:100%;padding-left:118px;font-weight:400}#props>button{color:var(--red);margin-top:8px}.objectTitle{color:var(--yellow);margin:0 0 8px}.note{color:#6a8a8a;font-weight:400}footer{border-top:1px solid var(--line);flex-wrap:wrap;gap:4px 24px;padding:6px 12px;display:flex}#message.error,#checks{color:var(--red)}#helpBox{border:2px solid var(--magenta);z-index:10;background:#000;max-width:460px;padding:12px 16px;line-height:1.6;position:fixed;top:50px;right:530px}#helpBox strong{color:var(--magenta)}#helpBox h3{color:var(--yellow);margin:8px 0 2px;font-size:12px}</style>
+    <script type="module" crossorigin src="./assets/editor-CRuRgaOe.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/resources-DreY3LZP.js">
+  </head>
+  <body>
+    <header>
+      <h1>EXOLON LEVEL EDITOR</h1>
+      <div class="group">
+        <button id="prev" title="Previous screen ([)">&lt;</button>
+        <select id="screen"></select>
+        <button id="next" title="Next screen (])">&gt;</button>
+      </div>
+      <div class="group">
+        NEXT SCREEN
+        <select id="nextLevel"><option value="">(none)</option></select>
+      </div>
+      <div class="group">
+        <button id="undo" title="Ctrl+Z">UNDO</button>
+        <button id="redo" title="Ctrl+Y">REDO</button>
+      </div>
+      <div class="group">
+        <label><input type="checkbox" id="grid" /> GRID (G)</label>
+        ZOOM
+        <select id="zoom">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+      <div class="group">
+        <button id="save">SAVE</button>
+        <label title="Can't die, infinite ammo"><input type="checkbox" id="god" /> GOD MODE</label>
+        <button id="play">PLAY (P)</button>
+      </div>
+      <div class="group">
+        <button id="help">HELP (?)</button>
+        <a href="index.html">GAME</a>
+      </div>
+    </header>
+
+    <main>
+      <div id="view">
+        <div id="mapBox"><canvas id="map" tabindex="0"></canvas></div>
+        <div id="game" hidden>
+          <p>PLAYING THE SCREEN AS IT IS IN THE EDITOR. ESC: BACK TO EDITING</p>
+        </div>
+      </div>
+
+      <aside>
+        <section>
+          <h2>LAYERS</h2>
+          <ul id="layers"></ul>
+          <p class="note">From back to front. Tick to show in the editor, click the name to edit the layer.</p>
+        </section>
+
+        <section id="tilesSection">
+          <h2>TILES</h2>
+          <select id="tileset"></select>
+          <p class="note">Drag to pick a block of tiles. On the map: click to paint, right-click to erase, Alt+click to pick a tile.</p>
+          <div id="paletteBox"><canvas id="palette"></canvas></div>
+        </section>
+
+        <section id="collisionSection" hidden>
+          <h2>COLLISION</h2>
+          <p class="note">The red cells are solid: the player walks on them and can't go through. Click to paint, right-click to erase.</p>
+        </section>
+
+        <section id="objectsSection" hidden>
+          <h2>OBJECTS</h2>
+          <div id="objectTypes"></div>
+          <p class="note">Pick a kind of object and click on the map to place it. With SELECT, drag the objects to move them (Shift: by pixels), right-click to delete.</p>
+          <h2>SELECTED OBJECT</h2>
+          <div id="props"></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer>
+      <span id="position"></span>
+      <span id="checks"></span>
+      <span id="message"></span>
+    </footer>
+
+    <div id="helpBox" hidden>
+      <h3>LAYERS</h3>
+      <strong>1</strong> TILE LAYER 1 &nbsp; <strong>2</strong> TILE LAYER 2 &nbsp; <strong>3</strong> STARS &nbsp;
+      <strong>4</strong> COLLISION &nbsp; <strong>5</strong> OBJECTS
+      <h3>TILES</h3>
+      <strong>CLICK</strong> PAINT &nbsp; <strong>RIGHT-CLICK</strong> ERASE &nbsp; <strong>ALT+CLICK</strong> PICK THE TILE
+      <h3>OBJECTS</h3>
+      <strong>DRAG</strong> MOVE (SHIFT: BY PIXELS) &nbsp; <strong>ARROWS</strong> NUDGE &nbsp; <strong>DEL</strong> DELETE
+      &nbsp; <strong>ESC</strong> STOP PLACING / DESELECT
+      <h3>GENERAL</h3>
+      <strong>P</strong> PLAY THE SCREEN (ESC TO COME BACK) &nbsp; <strong>CTRL+Z / CTRL+Y</strong> UNDO / REDO &nbsp;
+      <strong>CTRL+S</strong> SAVE &nbsp; <strong>[ ]</strong> PREVIOUS / NEXT SCREEN &nbsp; <strong>G</strong> GRID
+      <h3>NOTES</h3>
+      The dashed line is the right edge of the screen: objects past it (like the enemy spawners) are off screen.
+      The HUD covers the two bottom rows.
+    </div>
+
+  </body>
+</html>
