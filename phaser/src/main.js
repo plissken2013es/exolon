@@ -11,6 +11,7 @@ import BonusScene from "./scenes/BonusScene.js";
 import config from "./config.js";
 import { applyLaunchOptions } from "./launch.js";
 import { enableMapHotReload } from "./maps/hotReload.js";
+import { initEditorBridge } from "./editorBridge.js";
 
 input.bindKey(input.KEY.LEFT, "left");
 input.bindKey(input.KEY.RIGHT, "right");
@@ -34,6 +35,7 @@ const phaserGame = new Phaser.Game({
   height: 384,
   backgroundColor: "#000000",
   pixelArt: true,
+  zoom: config.zoom,
   // Keyboard input is read directly from the window (see engine/input.js).
   input: { keyboard: false, mouse: false, touch: false, gamepad: false },
   audio: { disableWebAudio: false },
@@ -41,6 +43,7 @@ const phaserGame = new Phaser.Game({
 });
 
 enableMapHotReload(phaserGame);
+initEditorBridge(phaserGame);
 
 function initSoundToggle() {
   const anchor = document.createElement("a");

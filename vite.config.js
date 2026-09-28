@@ -104,5 +104,8 @@ export default defineConfig({
   build: {
     // Phaser alone is larger than Vite's default warning threshold.
     chunkSizeWarningLimit: 2000,
+    rolldownOptions: {
+      input: { game: "index.html", editor: "editor.html" },
+    },
   },
 });

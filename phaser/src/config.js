@@ -16,6 +16,8 @@ const config = {
   startLevel: null, // ?level=L02S05: start playing at that screen
   invincible: false, // ?god: the player can't die...
   infiniteAmmo: false, // ...and never runs out of ammo or grenades
+  zoom: 1, // ?zoom=2: display the game twice as big
+  embedded: false, // ?embedded: running inside the level editor
 
   // debug
   renderHitBox: false,

@@ -4,7 +4,7 @@ import audio from "../engine/audio.js";
 import CollisionMap from "../engine/CollisionMap.js";
 import FixedStep from "../engine/FixedStep.js";
 import config from "../config.js";
-import global from "../global.js";
+import global, { resetGlobal } from "../global.js";
 import util from "../util.js";
 import entities from "../entities/index.js";
 import GameOverWindow from "../entities/GameOverWindow.js";
@@ -195,17 +195,7 @@ export default class PlayScene extends Phaser.Scene {
 
     this.paused = true;
 
-    global.nextLevel = config.startLevel || config.initialLevel;
-
-    global.ammo = config.initialAmmo;
-    global.grenades = config.initialGrenades;
-    global.points = config.initialPoints;
-    global.lives = config.initialLives;
-    global.zones = config.initialZones;
-
-    global.aliveBlasterBulletCount = 0;
-    global.aliveGrenadesCount = 0;
-    global.aliveMissilesCount = 0;
+    resetGlobal(config.startLevel || config.initialLevel);
 
     this.time.delayedCall(4000, () => game.changeScene("Title"));
     audio.play("gameover");

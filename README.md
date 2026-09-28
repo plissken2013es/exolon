@@ -52,6 +52,12 @@ To try a screen, open the game at it and, if needed, without dying:
     http://localhost:5173/?level=L02S05        start at screen L02S05
     http://localhost:5173/?level=L02S05&god    ...and can't die, infinite ammo
 
+There is also a level editor: `editor.html` (or press E while playing with
+`npm run dev`). It paints the tile layers and the collision layer, places,
+moves and deletes objects and edits their properties, with undo/redo, and plays
+the screen being edited right away (P, Escape to come back). With `npm run dev`
+it saves the TMX maps in `maps/`; on the website it downloads them.
+
 `npm run maps` converts all the maps by hand (`-- --check` also checks that
 they can be written back to TMX unchanged).
 
